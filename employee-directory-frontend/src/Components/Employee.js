@@ -1,12 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useParams } from "react-router-dom";
 import 'semantic-ui-css/semantic.min.css';
 import {
-    Button,
-    Checkbox,
     Form,
     Input,
-    Radio,
     Select,
     TextArea,
     Container
@@ -18,13 +15,6 @@ const Employee = ({employee, departmentList, jobTitleList}) => {
     // const newEmployee = {first_name: '', last_name: '', photo: '', bio: '', department_id: '', job_title_id: '', location_id: ''}
 
     const [currentEmployee, setCurrentEmployee] = useState(employee);
-    const [transformedDepartmentList, setTransformedDepartmentList] = useState([]);
-    const [jobTitleNamesList, setJobTitleNamesList] = useState([]);
-
-	useEffect(() => {
-        setTransformedDepartmentList(transformDepartmentData(departmentList));
-        setJobTitleNamesList(transformJobTitleData(jobTitleList));
-	}, [])
 
     // handle all form values (except photo)
     const handleChange = (e, { name, value }) => {
@@ -43,12 +33,10 @@ const Employee = ({employee, departmentList, jobTitleList}) => {
             },
             body: JSON.stringify({currentEmployee})
           })
-          .then(function(res){
-      
+          .then(function(res){      
             if (res.status !== 200){
               alert("Not updated")
             }
-      
             return res.json()
         })
         .then(function(data){
@@ -58,36 +46,7 @@ const Employee = ({employee, departmentList, jobTitleList}) => {
           .catch(function(error){
             alert(error)
           })
-        // if(!values.title && !values.instructor && values.description && values.duration && values.featureImage && values.classType) return;
-        // if all values are filled => add class to class list, reset form, collapse form
-        // this.props.router.push('/');
-    }
-
-    const transformDepartmentData = (departmentList) => {
-        let dropdownList = [];
-        departmentList.forEach(d => {
-            const departmentItem = {
-                key: d.department_name[0], 
-                text: d.department_name,
-                value: d.id    
-            }
-            dropdownList.push(departmentItem);
-        })
-        // console.log("DEPARTMENT DROPDOWN: ", dropdownList)
-        return dropdownList;
-    }
-
-    const transformJobTitleData = (jobTitleList) => {
-        let dropdownList = [];
-        jobTitleList.forEach(j => {
-            const jobTitleItem = {
-                key: j.job_title[0],
-                text: j.job_title,
-                value: j.id    
-            }
-            dropdownList.push(jobTitleItem);
-        })
-        return dropdownList;
+        
     }
 
     const renderEmployee = () => {
@@ -117,7 +76,7 @@ const Employee = ({employee, departmentList, jobTitleList}) => {
                             control={Select}
                             label='Job Title'
                             name='job_title_id'
-                            options={jobTitleNamesList}
+                            options={jobTitleList}
                             placeholder='Job Title'
                             defaultValue={currentEmployee.job_title_id}
                             onChange={handleChange}
@@ -126,7 +85,7 @@ const Employee = ({employee, departmentList, jobTitleList}) => {
                             control={Select}
                             label='Department'
                             name='department_id'
-                            options={transformedDepartmentList}
+                            options={departmentList}
                             placeholder='Department'
                             defaultValue={currentEmployee.department_id}
                             onChange={handleChange}

@@ -1,15 +1,13 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
-	BrowserRouter as Router,
 	Switch,
 	Route,
 	Link,
 	useRouteMatch,
-  	useParams
 } from "react-router-dom";
 import Employee from '../Components/Employee';
 import 'semantic-ui-css/semantic.min.css';
-import { Card, Icon, Image, Container, Dropdown, Button, Grid, Search, Header } from 'semantic-ui-react';
+import { Card, Icon, Image, Container, Dropdown, Button, Grid, Header } from 'semantic-ui-react';
 
 const options = [
     { key: 1, text: 'Choice 1', value: 1 },
@@ -17,26 +15,74 @@ const options = [
     { key: 3, text: 'Choice 3', value: 3 },
 ]
 
-const EmployeeContainer = ({employees, departmentList, jobTitleList }) => {
+const EmployeeContainer = () => {
     let routeMatch = useRouteMatch();
 
+    const [employees, setEmployees] = useState([]);
+	const [departmentList, setDepartments] = useState([]);
+	const [jobTitleList, setJobTitleList] = useState([]);
+
+
+	useEffect(() => {
+		Promise.all([
+            fetch("http://localhost:3000/api/v1/employees").then(res => res.json()),
+            fetch("http://localhost:3000/api/v1/departments").then(res => res.json()),
+			fetch("http://localhost:3000/api/v1/job_titles").then(res => res.json())
+        ]).then(([employeeData, departmentData, jobTitleData]) => {
+            const transformedDepartmentList = transformDepartmentData(departmentData);
+            const transformedJobTitleList = transformJobTitleData(jobTitleData);
+            
+            setEmployees(employeeData);
+            setDepartments(transformedDepartmentList);
+			setJobTitleList(transformedJobTitleList);
+			console.log(employeeData.length, departmentData.length, jobTitleData.length)
+		})
+	}, [])
+
+    const transformDepartmentData = (departmentList) => {
+        let dropdownList = [];
+        departmentList.forEach(d => {
+            const departmentItem = {
+                key: d.id, 
+                text: d.department_name,
+                value: d.id    
+            }
+            dropdownList.push(departmentItem);
+        })
+        // console.log("DEPARTMENT DROPDOWN: ", dropdownList)
+        return dropdownList;
+    }
+
+    const transformJobTitleData = (jobTitleList) => {
+        let dropdownList = [];
+        jobTitleList.forEach(j => {
+            const jobTitleItem = {
+                key: j.id,
+                text: j.job_title,
+                value: j.id    
+            }
+            dropdownList.push(jobTitleItem);
+        })
+        return dropdownList;
+    }
+
     const getJobTitle = (id) => {
-        return jobTitleList.find(j => j.id === id).job_title;
+        return jobTitleList.find(d => d.value === id).text
     }
 
     const getDepartment = (id) => {
-        return departmentList.find(d => d.id === id).department_name;
+        return departmentList.find(d => d.value === id).text;
     }
 
     const renderAllEmployees = () => {
         return employees.map(e => {
             return (
-                <Card>
+                <Card key={e.id}>
                     <Image src={e.photo} wrapped ui={false} />
                     <Card.Content>
                         <Card.Header>{e.first_name + " " + e.last_name}</Card.Header>
-                        <Card.Meta>{getJobTitle(e.job_title_id)}</Card.Meta>
-                        <Card.Meta>{getDepartment(e.department_id)}</Card.Meta>
+                        <Card.Meta>{jobTitleList.length === 0 ? null : getJobTitle(e.job_title_id)}</Card.Meta>
+                        <Card.Meta>{departmentList.length === 0 ? null : getDepartment(e.department_id)}</Card.Meta>
                         <Card.Description>
                             Daniel is a comedian living in Nashville.
                         </Card.Description>
@@ -45,7 +91,7 @@ const EmployeeContainer = ({employees, departmentList, jobTitleList }) => {
                     <Card.Content extra>
                         <a>
                             <Icon name='user' />
-                            Joined: 
+                            Year Started: 
                         </a>
                     </Card.Content>
                 </Card>
