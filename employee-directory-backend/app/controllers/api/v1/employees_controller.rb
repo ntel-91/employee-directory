@@ -1,7 +1,22 @@
 class Api::V1::EmployeesController < ApplicationController
 
     def index
-        employees = Employee.all
+        
+        employees = []
+        if params[:jobTitle] == nil
+            employees = Employee.all
+        else
+            jobTitleId = params[:jobTitle] == "null" ? nil : params[:jobTitle]
+            departmentId = params[:department] == "null" ? nil : params[:department]
+            if jobTitleId && departmentId
+                employees = Employee.where("department_id = #{departmentId} and job_title_id = #{jobTitleId}").all
+            elsif jobTitleId
+                employees = Employee.where(job_title_id: jobTitleId)
+            elsif departmentId
+                employees = Employee.where(department_id: departmentId)  
+            end
+        end
+        
         render json: employees
     end
 

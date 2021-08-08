@@ -10,7 +10,7 @@ import {
   } from 'semantic-ui-react'
 
 
-const Employee = ({employee, departmentList, jobTitleList}) => {
+const Employee = ({employee, departmentList, jobTitleList, updateEmployeeList}) => {
     const { employeeId } = useParams();
     // const newEmployee = {first_name: '', last_name: '', photo: '', bio: '', department_id: '', job_title_id: '', location_id: ''}
 
@@ -21,7 +21,7 @@ const Employee = ({employee, departmentList, jobTitleList}) => {
         setCurrentEmployee({...currentEmployee, [name]: value })
     };
 
-    // // submit updated employee data
+    // submit updated employee data
     const handleSubmit = (e) => {
         e.preventDefault();
         fetch(`http://localhost:3000/api/v1/employees/${employeeId}`, {
@@ -40,13 +40,12 @@ const Employee = ({employee, departmentList, jobTitleList}) => {
             return res.json()
         })
         .then(function(data){
-            debugger
             console.log(data)
+            updateEmployeeList(data.employee);
           })
           .catch(function(error){
             alert(error)
-          })
-        
+          })    
     }
 
     const renderEmployee = () => {
