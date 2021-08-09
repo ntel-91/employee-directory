@@ -97,10 +97,6 @@ data = [
 	},
 ]
 
-# DEPARTMENTS = Faker::Base.fetch_all('commerce.department').map do |title|
-#   	Department.find_or_create_by!(title: title)
-# end
-
 data.each do |department|
 	currDepartment = Department.create(department_name: department[:department])
 	jobs = department[:job_titles]
@@ -110,21 +106,12 @@ data.each do |department|
 		
 		i = 0
 		while i < job[:count] do
-			
-    	
-				# first = ''
-				# photo = ''
-				# if i % 2 = 0
-				# 	first = Faker::Name.male_first_name
-				# 	photo = Faker::Avatar.image(size: "200x200")
-				# else
-				# 	first = Faker::Name.female_first_name
-				# 	photo = Faker::Avatar.image(size: "200x200")
-				# end
 			employee = Employee.new(
 				first_name: Faker::Name.male_first_name,
 				last_name: Faker::Name.last_name,
-				photo: Faker::Avatar.image(size: "200x200")
+				photo: Faker::Avatar.image(size: "200x200"),
+				bio: Faker::Company.bs,
+				year_joined: 2021 -  Faker::Number.between(from: 0, to: 5)
 			)
 
 			employee.department = currDepartment

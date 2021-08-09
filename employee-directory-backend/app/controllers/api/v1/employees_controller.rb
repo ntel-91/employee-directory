@@ -17,7 +17,7 @@ class Api::V1::EmployeesController < ApplicationController
             end
         end
         
-        render json: employees
+        render json: employees.sort_by{|e| e[:last_name]}
     end
 
     def update
