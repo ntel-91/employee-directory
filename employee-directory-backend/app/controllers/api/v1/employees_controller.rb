@@ -24,7 +24,6 @@ class Api::V1::EmployeesController < ApplicationController
 
         updatedData = params[:currentEmployee]
         employee = Employee.find(params[:id].to_i)
-
         employee.update(
             department_id: updatedData[:department_id],
             job_title_id: updatedData[:job_title_id],

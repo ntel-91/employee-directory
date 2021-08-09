@@ -40,7 +40,6 @@ const Employee = ({employee, departmentList, jobTitleList, updateEmployeeList}) 
             return res.json()
         })
         .then(function(data){
-            console.log(data)
             updateEmployeeList(data.employee);
           })
           .catch(function(error){
@@ -93,10 +92,12 @@ const Employee = ({employee, departmentList, jobTitleList, updateEmployeeList}) 
                     <Form.Field
                         control={TextArea}
                         label='About'
+                        name='bio'
+                        defaultValue={currentEmployee.bio}
                         placeholder='Tell us more about you...'
+                        onChange={handleChange}
                     />
                     <Form.Button content='Update'/>
-                    {/* <Form.Field control={Button}>Submit</Form.Field> */}
                 </Form>
             </Container>
         )

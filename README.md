@@ -44,7 +44,7 @@ and run the following commands to setup the ruby on rails backend.
     rails db:create
     rails db:migrate
     rails db:seed
-    rails server
+    rails server -p 3000
 ```
 
 ## Notes
